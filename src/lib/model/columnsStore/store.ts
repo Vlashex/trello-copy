@@ -1,4 +1,5 @@
-import { Active, Over } from "@dnd-kit/core";
+
+
 import { arrayMove } from "@dnd-kit/sortable";
 import { create } from "zustand";
 
@@ -13,6 +14,7 @@ type ColumnContainerProps = {
   title: string;
   tasks: TaskContainerProps[];
 };
+
 
 type ColumnsStore = {
   columns: ColumnContainerProps[] | [];
@@ -49,9 +51,7 @@ const columnStore = create<ColumnsStore>((set) => ({
     set((state) => {
       const newColumns = state.columns.slice();
       const colIndex = newColumns.findIndex((el) => el.id === columnId);
-      const tastIndex = newColumns[colIndex].tasks.findIndex(
-        (el) => el.id === taskId
-      );
+     
       newColumns[colIndex].tasks = newColumns[colIndex].tasks.filter(
         (el) => el.id !== taskId
       );

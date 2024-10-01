@@ -1,24 +1,23 @@
 "use client";
+
+
+
 import { columnStore } from "@/lib/model/columnsStore/store";
 import {
   closestCenter,
   DndContext,
   DragOverlay,
-  KeyboardSensor,
   MouseSensor,
-  PointerSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import {
   horizontalListSortingStrategy,
   SortableContext,
-  sortableKeyboardCoordinates,
   useSortable,
-  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 
 type TaskContainerProps = {
@@ -64,9 +63,7 @@ const TaskContainer = ({ id, content, columnId }: TaskContainerProps) => {
     >
       <h1 className="mb-1">Task {id}</h1>
       <p className="overflow-y-visible min-h-20">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi repellat
-        alias optio in natus facere voluptates eos debitis nesciunt iste
-        aspernatur, autem, harum inventore ipsum culpa ut corporis qui sint?
+        {content}
       </p>
     </div>
   );
@@ -87,7 +84,6 @@ const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
     setNodeRef,
     listeners,
     attributes,
-    overIndex,
   } = useSortable({
     id: id,
     data: {
@@ -99,12 +95,6 @@ const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
     transform: CSS.Transform.toString(transform),
     transition,
   };
-
-  const moveTaskToAnotherPlace = columnStore(
-    (state) => state.moveTaskToAnotherPlace
-  );
-
-  const [activeId, setActiveId] = useState<number | null>(null);
 
   return (
     <div
