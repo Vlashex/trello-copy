@@ -95,7 +95,7 @@ const columnStore = create<ColumnsStore>((set) => ({
       const activeTask = activeColumn.tasks.find((el) => el.id === active.id);
 
       if (activeTask === undefined) return state;
-
+      
       if (over.data.current.type === "Column") {
         if (over.id === active.data.current.columnId) return state
 
@@ -105,18 +105,17 @@ const columnStore = create<ColumnsStore>((set) => ({
         if (overColumn === undefined) return state;
 
         overColumn.tasks = [...overColumn.tasks, activeTask];
-        console.log(overColumn)
+        
         activeColumn.tasks = activeColumn.tasks.filter(el => el.id !== active.id)
-        console.log(activeColumn)
+        
         const activeColumnIndex = newColumns.indexOf(activeColumn)
 
         const overColumnIndex = newColumns.indexOf(overColumn);
 
         newColumns[overColumnIndex] = overColumn;
-        newColumns[activeColumnIndex] = activeColumn
-        console.log(newColumns)
+        newColumns[activeColumnIndex] = activeColumn;
       }
-
+      
       if (over.data.current.type === "Task") {
         const activeTaskIndex = activeColumn.tasks.indexOf(activeTask)
 
@@ -132,7 +131,7 @@ const columnStore = create<ColumnsStore>((set) => ({
 
         newColumns[activeColumnIndex] = activeColumn
       }
-
+      
       return { columns: newColumns };
     }),
 }));
