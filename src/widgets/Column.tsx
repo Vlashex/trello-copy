@@ -1,13 +1,14 @@
-import { columnStore } from "@/lib/model/columnsStore/store";
+import { dndStore } from "@/lib/model/columnsStore/store";
 import { ColumnContainerProps } from "@/shared/types";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { TaskContainer } from "./Task";
+import Button from "@/features/button";
 
 export const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
-  const delColumn = columnStore((state) => state.delColumn);
+  const delColumn = dndStore((state) => state.delColumn);
 
-  const addTaskToColumn = columnStore((state) => state.addTaskToColumn);
+  const addTaskToColumn = dndStore((state) => state.addTaskToColumn);
 
   const {
     transform,
@@ -39,29 +40,29 @@ export const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
         <p>
           {title} {id}
         </p>
-        <button
-          className="ml-auto hover:bg-gray-400 p-1"
-          onClick={() => delColumn(id)}
-        >
-          del
-        </button>
+        <div className="ml-auto">
+            <Button fun={delColumn} funOpts={id}>del</Button>
+        </div>
+
       </div>
-      <div className="flex flex-grow flex-col px-2 gap-2">
-        <SortableContext items={tasks}>
-          {tasks.map((value, index) => (
-            <TaskContainer
-              key={index}
-              id={value.id}
-              content={value.content}
-              columnId={id}
-            />
-          ))}
-        </SortableContext>
-      </div>
-      <button className="hover:bg-gray-400" onClick={() => addTaskToColumn(id)}>
-        {" "}
-        New task
-      </button>
+      {
+        tasks?
+        <div className="flex flex-grow flex-col px-2 gap-2">
+          {/* <SortableContext items={tasks}>
+            tasks.map((value, index) => (
+              <TaskContainer
+                key={index}
+                id={value.id}
+                content={value.content}
+                  columnId={id}
+              />
+            ))
+          </SortableContext> */}
+        </div>
+      :null
+      }
+    
+      <Button fun={addTaskToColumn} funOpts={id}>New task</Button>
     </div>
   );
 };
