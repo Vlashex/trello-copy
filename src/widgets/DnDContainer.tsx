@@ -19,6 +19,8 @@ import { ColumnContainerProps } from "@/shared/types";
 import { addColumn } from "@/api/addColumnAction";
 import useSWR from "swr";
 import { dndStore } from "@/lib/model/columnsStore/store";
+import { optimisticUpdateColumn } from "@/features/columns/lib/optimisticUpdateColumns";
+import { optimisticAddColumn } from "@/features/columns/lib/optimisticAddColumn";
 
 
 const fetcher = (url: string) => {
@@ -47,11 +49,9 @@ export default function () {
 
   const columns = dndStore((state) => state.columns);
 
-  const addColumn = dndStore((state) => state.addColumn);
+  const [rollBackColumnsData, setRollBackColumnsData] = useState<ColumnContainerProps[]>();
+
   const switchColumnsPlaces = dndStore((state) => state.switchColumnsPlaces);
-  const moveTaskToAnotherPlace = dndStore(
-    (state) => state.moveTaskToAnotherPlace
-  );
 
   const [active, setActive] = useState<any>(null);
 
@@ -70,15 +70,23 @@ export default function () {
           sensors={sensors}
           onDragStart={({ active }) => {
             setActive(columns.find((el) => el.id === active.id) || null);
+            setRollBackColumnsData(columns);
           }}
           onDragEnd={
-            ({ active, over }) =>
-              active?.data.current?.type === "Column" && over
-            ? switchColumnsPlaces(Number(active.id), Number(over.id))
-            : null
+            ({ active, over }) => {
+              if (active?.data.current?.type === "Column" && over && rollBackColumnsData) {
+                console.log("Prev", columns)
+                optimisticUpdateColumn(rollBackColumnsData, columns);
+                console.log("New", columns)
+              }
+            }
           }
-          onDragOver={({ active, over }) => {
-            over ? moveTaskToAnotherPlace(active, over) : null;
+          onDragOver={({ over }) => {
+            console.log(active?.id, over, over?.id)
+            if (active?.id && over && over?.id) {
+              console.log("switch")
+              switchColumnsPlaces(active?.id, (over?.id as number))
+            }
           }}
         >
           <SortableContext
@@ -91,7 +99,7 @@ export default function () {
                 id={value.id}
                 title={value.title}
                 tasks={value.tasks}
-                index={value.index}
+                position={value.position}
               />
             ))}
           </SortableContext>
@@ -103,14 +111,14 @@ export default function () {
                     id={active.id}
                     content={active.content}
                     columnId={active.columnId}
-                    index={active.index}
+                    position={active.position}
                   />
                 ) : (
                   <ColumnContainer
                     id={active.id}
                     title={active.title}
                     tasks={active.tasks}
-                    index={active.index}
+                    position={active.position}
                   />
                 )}
               </DragOverlay>,
@@ -121,7 +129,7 @@ export default function () {
     
     }
       <div className="bg-black text-white p-2 ml-auto">
-        <button onClick={() => addColumn()}>Add column</button>
+        <button onClick={() => optimisticAddColumn()}>Add column</button>
       </div>
     </main>
   );

@@ -10,18 +10,13 @@ export const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
 
   const addTaskToColumn = dndStore((state) => state.addTaskToColumn);
 
-  const {
-    transform,
-    transition,
-    setNodeRef,
-    listeners,
-    attributes,
-  } = useSortable({
-    id: id,
-    data: {
-      type: "Column",
-    },
-  });
+  const { transform, transition, setNodeRef, listeners, attributes } =
+    useSortable({
+      id: id,
+      data: {
+        type: "Column",
+      },
+    });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -41,28 +36,30 @@ export const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
           {title} {id}
         </p>
         <div className="ml-auto">
-            <Button fun={delColumn} funOpts={id}>del</Button>
+          <Button fun={delColumn} funOpts={id}>
+            del
+          </Button>
         </div>
-
       </div>
-      {
-        tasks?
+      {tasks && tasks.length > 0 ? (
         <div className="flex flex-grow flex-col px-2 gap-2">
-          {/* <SortableContext items={tasks}>
-            tasks.map((value, index) => (
+          <SortableContext items={tasks}>
+            {tasks.map((value, index) => (
               <TaskContainer
                 key={index}
                 id={value.id}
                 content={value.content}
-                  columnId={id}
+                columnId={id}
+                position={value.position}
               />
-            ))
-          </SortableContext> */}
+            ))}
+          </SortableContext>
         </div>
-      :null
-      }
-    
-      <Button fun={addTaskToColumn} funOpts={id}>New task</Button>
+      ) : null}
+
+      <Button fun={addTaskToColumn} funOpts={id}>
+        New task
+      </Button>
     </div>
   );
 };

@@ -31,14 +31,15 @@ export async function optimisticUpdate<T>({
     let attempt = 0;
 
     while (attempt < maxRetries) {
-        try {
-            await requestFn();
+        const res = await requestFn();
 
+        if (res.error === null) {
             if (setLoading) setLoading(false);
             return;
-        } catch (error) {
+        }
+        else {
             attempt++;
-            console.error(`Попытка ${attempt} не удалась`, error);
+            console.error(`Попытка ${attempt} не удалась`, res.error);
 
             if (attempt < maxRetries)
                 await new Promise((resolve) => setTimeout(resolve, retryDelay));

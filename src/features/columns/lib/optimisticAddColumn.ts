@@ -3,19 +3,18 @@ import { optimisticUpdate } from '@/lib/model/optimisticUpdateFn';
 import { ColumnContainerProps } from '@/shared/types';
 import axios from 'axios';
 
-type positions = {id: number, position: number}
 
-const updateFn = (rollBackData: ColumnContainerProps[], columns: ColumnContainerProps[]): [] | ColumnContainerProps[] => {
-    dndStore.getState().setColumns(columns)
+
+const updateFn = (): [] | ColumnContainerProps[] => {
+    const rollBackData = dndStore.getState().columns;
+    dndStore.getState().addColumn();
     return rollBackData;
 };
 
 // Серверная функция для обновления колонок
-const updateTaskOnServer = async(reqData: positions[]) => {
+const updateColumnOnServer = async() => {
   const response = 
-    await axios.put(`http://localhost:4200/api/columns`, reqData, {
-        withCredentials: true
-    })
+    await axios.post(`http://localhost:4200/api/columns`)
     .then((res) => {
         return {
             status: res.data.status,
@@ -33,18 +32,16 @@ const updateTaskOnServer = async(reqData: positions[]) => {
 }
 
 // Функция запроса
-const requestFn = async (columns: ColumnContainerProps[]) => {
-    const reqData = columns.map(({id, position}) => ({id, position}))
-
-  return updateTaskOnServer(reqData);
+const requestFn = async () => {
+  return updateColumnOnServer();
 };
 const rollbackFn = (rollBackData: ColumnContainerProps[]) => {
   dndStore.getState().setColumns(rollBackData);
 };
 
 
-export const optimisticUpdateColumn = (rollBackData: ColumnContainerProps[], columns: ColumnContainerProps[]) => optimisticUpdate({
-  updateFn: () => updateFn(rollBackData, columns),
-  requestFn: () => requestFn(columns),
+export const optimisticAddColumn = () => optimisticUpdate({
+  updateFn: () => updateFn(),
+  requestFn: () => requestFn(),
   rollbackFn: (rollBackData: ColumnContainerProps[]) => rollbackFn(rollBackData)
 });

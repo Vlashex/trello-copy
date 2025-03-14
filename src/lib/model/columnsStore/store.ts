@@ -3,6 +3,11 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { create } from "zustand";
 
 
+type ColumnPos = {
+  id: number,
+  position: number
+}
+
 type ColumnsStore = {
   columns: ColumnContainerProps[] | [];
   setColumns: (initVal: ColumnContainerProps[]) => void;
@@ -14,16 +19,12 @@ type ColumnsStore = {
   addTaskToColumn: (columnId: number) => void;
   switchColumnsPlaces: (activeId: number, overId: number) => void;
   moveTaskToAnotherPlace: (active: any, over: any) => void;
-
-
-  updateTask: (taskId: number, newData: Partial<TaskContainerProps>) => TaskContainerProps | null;
-  rollbackTask: (taskId: number, oldData: TaskContainerProps) => void;
 };
 
 const dndStore = create<ColumnsStore>((set, get) => ({
   columns: [],
   setColumns: (initVal : ColumnContainerProps[]) => 
-    set((state) => { return {columns: initVal}}),
+    set((state) => ({columns: initVal.slice().sort((a,b)=>a.position - b.position)})),
 
 
 
@@ -33,7 +34,7 @@ const dndStore = create<ColumnsStore>((set, get) => ({
         id: Math.round(Math.random() * 1001),
         title: "New Column",
         tasks: [],
-        index: Math.round(Math.random() * 1001),
+        position: Math.round(Math.random() * 1001),
       };
 
       return { columns: [...state.columns, newColumn] };
@@ -67,7 +68,7 @@ const dndStore = create<ColumnsStore>((set, get) => ({
         id: Math.round(Math.random() * 1001),
         content: "NewTask",
         columnId: columnId,
-        index: Math.round(Math.random() * 1001),
+        position: Math.round(Math.random() * 1001),
       };
 
       newColumns[columnIndex].tasks = [...columnTasks, newTask];
@@ -80,12 +81,12 @@ const dndStore = create<ColumnsStore>((set, get) => ({
       const firstIndex = columns.findIndex((el) => el.id === activeId);
       const secondIndex = columns.findIndex((el) => el.id === overId);
 
-      const temp = columns[firstIndex].index;
-      columns[firstIndex].index = columns[secondIndex].index;
-      columns[secondIndex].index = temp;
+      const temp = columns[firstIndex].position;
+      columns[firstIndex].position = columns[secondIndex].position;
+      columns[secondIndex].position = temp;
 
 
-      return { columns: columns.slice().sort((a,b)=>a.index - b.index) };
+      return { columns: columns.slice().sort((a,b)=>a.position - b.position) };
     }),
   moveTaskToAnotherPlace: (active, over) =>
     set((state) => {
@@ -139,36 +140,6 @@ const dndStore = create<ColumnsStore>((set, get) => ({
       
       return { columns: newColumns };
     }),
-
-
-    updateTask: (taskId, newData) => {
-      const { columns } = get();
-
-      for (const column of columns) {
-        const taskIndex = column.tasks.findIndex((task) => task.id === taskId);
-        if (taskIndex !== -1) {
-          const oldTask = {...column.tasks[taskIndex]};
-          column.tasks[taskIndex] = { ...oldTask, ...newData };
-          set({ columns: [...columns] });
-          return oldTask;
-        }
-      }
-      return null;
-    },
-
-    rollbackTask(taskId, oldData) {
-      const { columns } = get();
-
-      for (const column of columns) {
-        const taskIndex = column.tasks.findIndex((task) => task.id === taskId);
-
-        if (taskIndex !== -1) {
-          column.tasks[taskIndex] = oldData;
-          set({ columns: [...columns] });
-          break;
-        }
-      }
-    },
 }));
 
 export { dndStore };
