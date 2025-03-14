@@ -1,6 +1,6 @@
 type OptimisticUpdateParams<T> = {
     // Обновляющая функция, предназначенная для мгновенного обновления состояния и возвращающая резервное состояние для отката
-    updateFn: () => T;
+    updateFn: () => T | null;
     // Запрос, отправляемый на сервер и возвращающий Promise, обеспечивающий попытку обновления данных
     requestFn: () => Promise<any>;
     // Механизм отката, осуществляемый при ошибке запроса и принимающий сохранённое состояние для восстановления
@@ -28,6 +28,9 @@ export async function optimisticUpdate<T>({
     if (setLoading) setLoading(true);
 
     const rollbackData = updateFn();
+
+    if (!rollbackData) return;
+
     let attempt = 0;
 
     while (attempt < maxRetries) {

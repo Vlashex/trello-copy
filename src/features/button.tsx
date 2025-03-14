@@ -1,8 +1,9 @@
 import { ReactElement } from "react";
 
-export default function Button({children, fun, funOpts} : {children : ReactElement | string, fun: (Opts:any)=>void, funOpts?: any}) {
+export default function Button({children, fun, funOpts, disabled} : {children : ReactElement | string, fun: (Opts:any)=>void, funOpts?: any, disabled?: boolean}) {
   return (
     <button
+      disabled={disabled!=undefined?disabled:false}
       className="w-full h-full hover:bg-gray-400 p-1"
       onClick={() => fun(funOpts)}
     >

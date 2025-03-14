@@ -4,11 +4,10 @@ import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { TaskContainer } from "./Task";
 import Button from "@/features/button";
+import { optimisticAddTask } from "@/features/tasks/lib/optimisticAddTask";
+import { optimisticDeleteColumn } from "@/features/columns/lib/optimisticDeleteColumn";
 
 export const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
-  const delColumn = dndStore((state) => state.delColumn);
-
-  const addTaskToColumn = dndStore((state) => state.addTaskToColumn);
 
   const { transform, transition, setNodeRef, listeners, attributes } =
     useSortable({
@@ -28,15 +27,16 @@ export const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
       style={style}
       ref={setNodeRef}
       {...attributes}
-      {...listeners}
       className="flex flex-col gap-4 min-h-[400px] min-w-[250px] w-[250px] bg-gray-500 text-white  overflow-hidden bg-gray-800 rounded-sm"
     >
-      <div className="flex gap-4 items-center  p-2">
+      <div className="flex gap-4 items-center  p-2"
+      {...listeners}
+      >
         <p>
           {title} {id}
         </p>
         <div className="ml-auto">
-          <Button fun={delColumn} funOpts={id}>
+          <Button fun={optimisticDeleteColumn} funOpts={id}>
             del
           </Button>
         </div>
@@ -57,7 +57,7 @@ export const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
         </div>
       ) : null}
 
-      <Button fun={addTaskToColumn} funOpts={id}>
+      <Button fun={optimisticAddTask} funOpts={id}>
         New task
       </Button>
     </div>

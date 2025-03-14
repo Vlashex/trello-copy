@@ -2,31 +2,33 @@ import { ColumnContainerProps, TaskContainerProps } from "@/shared/types";
 import { arrayMove } from "@dnd-kit/sortable";
 import { create } from "zustand";
 
-
-type ColumnPos = {
-  id: number,
-  position: number
-}
-
 type ColumnsStore = {
   columns: ColumnContainerProps[] | [];
   setColumns: (initVal: ColumnContainerProps[]) => void;
 
-  delColumn: (columnId: string | number) => void;
-  delTaskFromColumn: (taskId: number, columnId: number) => void;
   addColumn: () => void;
+  updateColumns: (columnProps: ColumnContainerProps) => void;
+  delColumn: (columnId: string | number) => void;
+
+  switchColumnsPlaces: (activeId: number, overId: number) => void;
 
   addTaskToColumn: (columnId: number) => void;
-  switchColumnsPlaces: (activeId: number, overId: number) => void;
-  moveTaskToAnotherPlace: (active: any, over: any) => void;
+  delTaskFromColumn: (taskId: number, columnId: number) => void;
+
+  moveTaskToAnotherPlaceInColumn: (
+    activeTaskId: number,
+    overTaskId: number,
+    columnId: number
+  ) => void;
+  moveTaskToAnotherColumn: (taskId: number, columnId: number) => void;
 };
 
 const dndStore = create<ColumnsStore>((set, get) => ({
   columns: [],
-  setColumns: (initVal : ColumnContainerProps[]) => 
-    set((state) => ({columns: initVal.slice().sort((a,b)=>a.position - b.position)})),
-
-
+  setColumns: (initVal: ColumnContainerProps[]) =>
+    set((state) => ({
+      columns: initVal.slice().sort((a, b) => a.position - b.position),
+    })),
 
   addColumn: () =>
     set((state) => {
@@ -39,6 +41,17 @@ const dndStore = create<ColumnsStore>((set, get) => ({
 
       return { columns: [...state.columns, newColumn] };
     }),
+  updateColumns: (columnProps) =>
+    set((state) => {
+      const columns = state.columns.slice();
+
+      const columnIndex = columns.findIndex((el) => el.id === columnProps.id);
+
+      columns[columnIndex] = columnProps;
+
+      return { columns: columns };
+    }),
+
   delColumn: (id) =>
     set((state) => {
       const columnsWithoutOne = state.columns
@@ -51,7 +64,7 @@ const dndStore = create<ColumnsStore>((set, get) => ({
     set((state) => {
       const newColumns = state.columns.slice();
       const colIndex = newColumns.findIndex((el) => el.id === columnId);
-     
+
       newColumns[colIndex].tasks = newColumns[colIndex].tasks.filter(
         (el) => el.id !== taskId
       );
@@ -63,7 +76,8 @@ const dndStore = create<ColumnsStore>((set, get) => ({
       const newColumns = state.columns.slice();
       const columnIndex = newColumns.findIndex((el) => el.id === columnId);
 
-      const columnTasks = newColumns[columnIndex].tasks;
+      const columnTasks = newColumns[columnIndex].tasks || [];
+
       const newTask: TaskContainerProps = {
         id: Math.round(Math.random() * 1001),
         content: "NewTask",
@@ -71,7 +85,11 @@ const dndStore = create<ColumnsStore>((set, get) => ({
         position: Math.round(Math.random() * 1001),
       };
 
-      newColumns[columnIndex].tasks = [...columnTasks, newTask];
+      columnTasks.push(newTask);
+
+      console.log(columnTasks);
+
+      newColumns[columnIndex].tasks = columnTasks;
 
       return { columns: newColumns };
     }),
@@ -85,71 +103,89 @@ const dndStore = create<ColumnsStore>((set, get) => ({
       columns[firstIndex].position = columns[secondIndex].position;
       columns[secondIndex].position = temp;
 
-
-      return { columns: columns.slice().sort((a,b)=>a.position - b.position) };
+      return {
+        columns: columns.slice().sort((a, b) => a.position - b.position),
+      };
     }),
-  moveTaskToAnotherPlace: (active, over) =>
+  moveTaskToAnotherPlaceInColumn: (activeTaskId, overTaskId, columnId) =>
     set((state) => {
       const newColumns = state.columns.slice();
 
-      const activeColumn = newColumns.find(
-        (el) => el.id === active.data.current.columnId
-      );
+      const activeColumn = newColumns.find((el) => el.id === columnId);
 
       if (activeColumn === undefined) return state;
 
-      const activeTask = activeColumn.tasks.find((el) => el.id === active.id);
+      const activeTask = activeColumn.tasks.find(
+        (el) => el.id === activeTaskId
+      );
 
       if (activeTask === undefined) return state;
-      
-      if (over.data.current.type === "Column") {
-        if (over.id === active.data.current.columnId) return state
 
+      const activeTaskIndex = activeColumn.tasks.indexOf(activeTask);
 
-        const overColumn = newColumns.find((el) => el.id === over.id);
-        console.log(overColumn)
-        if (overColumn === undefined) return state;
+      const overTask = activeColumn.tasks.find((el) => el.id === overTaskId);
 
-        overColumn.tasks = [...overColumn.tasks, activeTask];
-        
-        activeColumn.tasks = activeColumn.tasks.filter(el => el.id !== active.id)
-        
-        const activeColumnIndex = newColumns.indexOf(activeColumn)
+      if (overTask === undefined) return state;
 
-        const overColumnIndex = newColumns.indexOf(overColumn);
+      const overTaskIndex = activeColumn.tasks.indexOf(overTask);
 
-        newColumns[overColumnIndex] = overColumn;
-        newColumns[activeColumnIndex] = activeColumn;
-      }
-      
-      if (over.data.current.type === "Task") {
-        const activeTaskIndex = activeColumn.tasks.indexOf(activeTask)
+      activeColumn.tasks = arrayMove(
+        activeColumn.tasks,
+        activeTaskIndex,
+        overTaskIndex
+      );
 
-        const overTask = activeColumn.tasks.find((el) => el.id === over.id)
+      const activeColumnIndex = newColumns.indexOf(activeColumn);
 
-        if (overTask === undefined) return state
+      newColumns[activeColumnIndex] = activeColumn;
 
-        const overTaskIndex = activeColumn.tasks.indexOf(overTask)
-
-        activeColumn.tasks = arrayMove(activeColumn.tasks, activeTaskIndex, overTaskIndex)
-
-        const activeColumnIndex = newColumns.indexOf(activeColumn)
-
-        newColumns[activeColumnIndex] = activeColumn
-      }
-      
       return { columns: newColumns };
     }),
+
+  moveTaskToAnotherColumn: (taskId, targetColumnId) =>
+  set((state) => {
+    const newColumns = state.columns.map((column) => ({ ...column }));
+
+    const sourceColumn = newColumns.find((column) =>
+      column.tasks.some((task) => task.id === taskId)
+    );
+    if (!sourceColumn) return state;
+
+    const taskToMove = sourceColumn.tasks.find((task) => task.id === taskId);
+    if (!taskToMove) return state;
+
+    const targetColumn = newColumns.find((column) => column.id === targetColumnId);
+    if (!targetColumn) return state;
+
+    sourceColumn.tasks = sourceColumn.tasks.filter((task) => task.id !== taskId);
+
+    targetColumn.tasks = [...targetColumn.tasks, taskToMove];
+
+    return { columns: newColumns };
+  }),
+
 }));
 
 export { dndStore };
 
+// if (over.data.current.type === "Column") {
+//         if (over.id === active.data.current.columnId) return state
 
+//         const overColumn = newColumns.find((el) => el.id === over.id);
+//         console.log(overColumn)
+//         if (overColumn === undefined) return state;
 
+//         overColumn.tasks = [...overColumn.tasks, activeTask];
 
+//         activeColumn.tasks = activeColumn.tasks.filter(el => el.id !== active.id)
 
+//         const activeColumnIndex = newColumns.indexOf(activeColumn)
 
+//         const overColumnIndex = newColumns.indexOf(overColumn);
 
+//         newColumns[overColumnIndex] = overColumn;
+//         newColumns[activeColumnIndex] = activeColumn;
+//       }
 
 // import { create } from 'zustand';
 // import { arrayMove } from '@dnd-kit/sortable';
@@ -172,7 +208,6 @@ export { dndStore };
 // }
 
 // export type StoreState = ColumnsSlice & TasksSlice;
-
 
 // /* Создаём слайс для работы с колонками */
 // const createColumnsSlice = (set, get):ColumnsSlice => ({
@@ -236,7 +271,7 @@ export { dndStore };
 //       if (!activeColumn) return state;
 //       const activeTask = activeColumn.tasks.find((t) => t.id === active.id);
 //       if (!activeTask) return state;
-      
+
 //       if (over.data.current.type === 'Column') {
 //         if (over.id === active.data.current.columnId) return state;
 //         const overColumn = newColumns.find((col) => col.id === over.id);
@@ -244,7 +279,7 @@ export { dndStore };
 //         overColumn.tasks = [...overColumn.tasks, activeTask];
 //         activeColumn.tasks = activeColumn.tasks.filter(t => t.id !== active.id);
 //       }
-      
+
 //       if (over.data.current.type === 'Task') {
 //         const activeTaskIndex = activeColumn.tasks.indexOf(activeTask);
 //         const overTask = activeColumn.tasks.find((t) => t.id === over.id);
@@ -252,7 +287,7 @@ export { dndStore };
 //         const overTaskIndex = activeColumn.tasks.indexOf(overTask);
 //         activeColumn.tasks = arrayMove(activeColumn.tasks, activeTaskIndex, overTaskIndex);
 //       }
-      
+
 //       return { columns: newColumns };
 //     }),
 //   updateTask: (taskId, newData) => {
