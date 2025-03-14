@@ -44,7 +44,7 @@ export const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
       {tasks && tasks.length > 0 ? (
         <div className="flex flex-grow flex-col px-2 gap-2">
           <SortableContext items={tasks}>
-            {tasks.map((value, index) => (
+            {tasks.sort((a,b) => b.position - a.position).map((value, index) => (
               <TaskContainer
                 key={index}
                 id={value.id}

@@ -6,6 +6,7 @@ import axios from 'axios';
 type positions = {id: number, position: number}
 
 const updateFn = (rollBackData: ColumnContainerProps[], columns: ColumnContainerProps[]): [] | ColumnContainerProps[] => {
+  console.log("Optimistic column")
     dndStore.getState().setColumns(columns)
     return rollBackData;
 };

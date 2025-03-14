@@ -21,6 +21,7 @@ import useSWR from "swr";
 import { dndStore } from "@/lib/model/columnsStore/store";
 import { optimisticUpdateColumn } from "@/features/columns/lib/optimisticUpdateColumns";
 import { optimisticAddColumn } from "@/features/columns/lib/optimisticAddColumn";
+import { optimisticUpdateTaskPosition } from "@/features/tasks/lib/optimisticMoveTaskToAnotherColumn";
 
 const fetcher = (url: string) => {
   return axios
@@ -73,13 +74,12 @@ export default function () {
         <DndContext
           sensors={sensors}
           onDragStart={({ active }) => {
-            console.log(active)
+            setRollBackColumnsData(columns);
             if (active?.data.current?.type === "Column") {
               setActive({
                 type: active?.data.current?.type,
                 data: columns.find((el) => el.id === active.id) || null,
               });
-              setRollBackColumnsData(columns);
             }
             if (active?.data.current?.type === "Task") {
               const column = columns.find((el) => el.id === active?.data.current?.columnId);
@@ -96,13 +96,21 @@ export default function () {
               });
             }
           }}
-          onDragEnd={({ active, over }) => {
+          onDragEnd={({ active: _active, over }) => {
+            console.log(rollBackColumnsData, _active.id as number, active?.data.position, _active?.data.current?.columnId)
             if (
-              active?.data.current?.type === "Column" &&
               over &&
-              rollBackColumnsData
+              rollBackColumnsData &&
+              rollBackColumnsData !== columns
             ) {
-              optimisticUpdateColumn(rollBackColumnsData, columns);
+              if (_active?.data.current?.type === "Column") {
+                console.log("Column")
+                optimisticUpdateColumn(rollBackColumnsData, columns);
+              }
+              else if(_active?.data.current?.type === "Task") {
+                console.log(rollBackColumnsData, _active.id as number, active?.data.position, _active?.data.current?.columnId)
+                optimisticUpdateTaskPosition(rollBackColumnsData, _active.id as number, active?.data.position,_active?.data.current?.columnId)
+              }
             }
           }}
           onDragOver={({ active: _active, over }) => {

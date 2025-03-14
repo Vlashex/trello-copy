@@ -111,35 +111,23 @@ const dndStore = create<ColumnsStore>((set, get) => ({
     set((state) => {
       const newColumns = state.columns.slice();
 
-      const activeColumn = newColumns.find((el) => el.id === columnId);
+      const activeColumnIndex = newColumns.findIndex((el) => el.id === columnId);
 
-      if (activeColumn === undefined) return state;
+      if (activeColumnIndex === -1) return state;
 
-      const activeTask = activeColumn.tasks.find(
-        (el) => el.id === activeTaskId
-      );
+      const activeTaskIndex = newColumns[activeColumnIndex].tasks.findIndex((el) => el.id === activeTaskId);
+      const overTaskIndex = newColumns[activeColumnIndex].tasks.findIndex((el) => el.id === overTaskId);
 
-      if (activeTask === undefined) return state;
+      if (activeTaskIndex === -1 || overTaskIndex === -1) return state;
 
-      const activeTaskIndex = activeColumn.tasks.indexOf(activeTask);
+      const temp = newColumns[activeColumnIndex].tasks[activeTaskIndex].position;
+      newColumns[activeColumnIndex].tasks[activeTaskIndex].position = newColumns[activeColumnIndex].tasks[overTaskIndex].position;
+      newColumns[activeColumnIndex].tasks[overTaskIndex].position = temp;
 
-      const overTask = activeColumn.tasks.find((el) => el.id === overTaskId);
+      console.log(newColumns[activeColumnIndex])
 
-      if (overTask === undefined) return state;
+      return {columns: newColumns.slice().sort((a, b) => a.position - b.position)};
 
-      const overTaskIndex = activeColumn.tasks.indexOf(overTask);
-
-      activeColumn.tasks = arrayMove(
-        activeColumn.tasks,
-        activeTaskIndex,
-        overTaskIndex
-      );
-
-      const activeColumnIndex = newColumns.indexOf(activeColumn);
-
-      newColumns[activeColumnIndex] = activeColumn;
-
-      return { columns: newColumns };
     }),
 
   moveTaskToAnotherColumn: (taskId, targetColumnId) =>

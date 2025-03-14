@@ -14,7 +14,7 @@ const updateFn = (columnId: number): ColumnContainerProps | null => {
 // Серверная функция для обновления колонок
 const updateTaskOnServer = async(columnId: number) => {
   const response = 
-    await axios.post(`http://localhost:4200/api/task/${columnId}`)
+    await axios.post(`http://localhost:4200/api/tasks/${columnId}`)
     .then((res) => {
         return {
             status: res.data.status,
