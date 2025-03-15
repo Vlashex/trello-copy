@@ -16,10 +16,32 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+
+  width: 100%;
+  height: fit-content;
+  overflow: hidden;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+
+/* Файл: styles.css */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cacacb;
+  /* Цвет полосы прокрутки */
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #4A5568;
+  /* Цвет фона полосы прокрутки */
+  border-radius: 4px;
 }

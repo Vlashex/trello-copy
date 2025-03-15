@@ -69,7 +69,7 @@ export default function () {
   );
 
   return (
-    <main className="flex gap-8 items-start mt-40 overflow-x-auto p-4 h-screen w-full">
+    <main className="flex custom-scrollbar gap-2 items-start m-2 overflow-x-auto p-4 h-screen w-full">
       {columns ? (
         <DndContext
           sensors={sensors}

@@ -27,7 +27,7 @@ export const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
       style={style}
       ref={setNodeRef}
       {...attributes}
-      className="flex flex-col gap-4 min-h-[400px] min-w-[250px] w-[250px] bg-gray-500 text-white  overflow-hidden bg-gray-800 rounded-sm"
+      className="flex flex-col gap-4 min-h-[400px] px-3 min-w-[250px] w-[250px] bg-gray-500 text-white  overflow-hidden bg-gray-800 rounded-sm"
     >
       <div className="flex gap-4 items-center  p-2"
       {...listeners}
@@ -42,7 +42,16 @@ export const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
         </div>
       </div>
       {tasks && tasks.length > 0 ? (
-        <div className="flex flex-grow flex-col px-2 gap-2">
+        <div className="
+        flex 
+        flex-grow 
+        flex-col 
+        gap-2 
+        max-h-[500px] 
+        overflow-y-auto
+        custom-scrollbar
+        "
+        >
           <SortableContext items={tasks}>
             {tasks.sort((a,b) => b.position - a.position).map((value, index) => (
               <TaskContainer
