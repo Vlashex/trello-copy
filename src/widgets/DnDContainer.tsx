@@ -10,13 +10,12 @@ import {
   horizontalListSortingStrategy,
   SortableContext,
 } from "@dnd-kit/sortable";
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ColumnContainer } from "./Column";
 import { createPortal } from "react-dom";
 import { TaskContainer } from "./Task";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios from "axios";
 import { ColumnContainerProps } from "@/shared/types";
-import { addColumn } from "@/api/addColumnAction";
 import useSWR from "swr";
 import { dndStore } from "@/lib/model/columnsStore/store";
 import { optimisticUpdateColumn } from "@/features/columns/lib/optimisticUpdateColumns";
@@ -32,8 +31,8 @@ const fetcher = (url: string) => {
       throw new Error("Failed to load");
     });
 };
-
-export default function () {
+  
+export default function DndContainer () {
   const { data } = useSWR<ColumnContainerProps[]>(
     "http://localhost:4200/api/columns",
     fetcher,

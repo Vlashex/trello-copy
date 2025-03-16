@@ -1,8 +1,9 @@
 import { TaskContainerProps } from "@/shared/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import TaskUI from "./TasksContainer/ui/taskUI";
 
-export const TaskContainer = ({ id, content, columnId }: TaskContainerProps) => {
+export const Task = ({ id, content, columnId }: TaskContainerProps) => {
   const {
     transform,
     transition,
@@ -31,10 +32,10 @@ export const TaskContainer = ({ id, content, columnId }: TaskContainerProps) => 
       {...attributes}
       {...listeners}
     >
-      <h1 className="mb-1">Task {id}</h1>
-      <p className="overflow-y-visible min-h-20">
-        {content}
-      </p>
+      <TaskUI 
+        id={id} 
+        content={content}
+      />
     </div>
   );
 };

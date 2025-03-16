@@ -1,5 +1,4 @@
 import { ColumnContainerProps, TaskContainerProps } from "@/shared/types";
-import { arrayMove } from "@dnd-kit/sortable";
 import { create } from "zustand";
 
 type ColumnsStore = {
@@ -23,10 +22,10 @@ type ColumnsStore = {
   moveTaskToAnotherColumn: (taskId: number, columnId: number) => void;
 };
 
-const dndStore = create<ColumnsStore>((set, get) => ({
+const dndStore = create<ColumnsStore>((set) => ({
   columns: [],
   setColumns: (initVal: ColumnContainerProps[]) =>
-    set((state) => ({
+    set(() => ({
       columns: initVal.slice().sort((a, b) => a.position - b.position),
     })),
 

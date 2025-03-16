@@ -1,11 +1,10 @@
-import { dndStore } from "@/lib/model/columnsStore/store";
 import { ColumnContainerProps } from "@/shared/types";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { TaskContainer } from "./Task";
 import Button from "@/features/button";
 import { optimisticAddTask } from "@/features/tasks/lib/optimisticAddTask";
 import { optimisticDeleteColumn } from "@/features/columns/lib/optimisticDeleteColumn";
+import TasksContainer from "./TasksContainer";
 
 export const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
 
@@ -53,15 +52,7 @@ export const ColumnContainer = ({ title, id, tasks }: ColumnContainerProps) => {
         "
         >
           <SortableContext items={tasks}>
-            {tasks.sort((a,b) => b.position - a.position).map((value, index) => (
-              <TaskContainer
-                key={index}
-                id={value.id}
-                content={value.content}
-                columnId={id}
-                position={value.position}
-              />
-            ))}
+            <TasksContainer columnId={id} tasks={tasks}/>
           </SortableContext>
         </div>
       ) : null}
