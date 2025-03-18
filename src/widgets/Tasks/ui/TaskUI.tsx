@@ -1,4 +1,4 @@
-"use server";
+
 import React from "react";
 
 type TaskUIProps = {
@@ -6,7 +6,7 @@ type TaskUIProps = {
   content: string;
 };
 
-export default async function TaskUI({ id, content }: TaskUIProps) {
+export default function TaskUI({ id, content }: TaskUIProps) {
   return (
     <>
       <h1 className="mb-1">Task {id}</h1>

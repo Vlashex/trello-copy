@@ -11,16 +11,16 @@ import {
   SortableContext,
 } from "@dnd-kit/sortable";
 import { useEffect, useState } from "react";
-import { ColumnContainer } from "./Column";
 import { createPortal } from "react-dom";
-import { TaskContainer } from "./Task";
 import axios from "axios";
 import { ColumnContainerProps } from "@/shared/types";
 import useSWR from "swr";
 import { dndStore } from "@/lib/model/columnsStore/store";
-import { optimisticUpdateColumn } from "@/features/columns/lib/optimisticUpdateColumns";
-import { optimisticAddColumn } from "@/features/columns/lib/optimisticAddColumn";
-import { optimisticUpdateTaskPosition } from "@/features/tasks/lib/optimisticMoveTaskToAnotherColumn";
+import { optimisticUpdateColumn } from "@/widgets/Columns/api/optimisticUpdateColumns";
+import { optimisticAddColumn } from "@/widgets/Columns/api/optimisticAddColumn";
+import { optimisticUpdateTaskPosition } from "@/widgets/Tasks/lib/optimisticMoveTaskToAnotherColumn";
+import { TaskContainer } from "./Tasks/TaskContainer";
+import { ColumnContainer } from "./Columns";
 
 const fetcher = (url: string) => {
   return axios
@@ -31,7 +31,7 @@ const fetcher = (url: string) => {
       throw new Error("Failed to load");
     });
 };
-  
+
 export default function DndContainer () {
   const { data } = useSWR<ColumnContainerProps[]>(
     "http://localhost:4200/api/columns",

@@ -1,9 +1,10 @@
+import React from "react";
 import { TaskContainerProps } from "@/shared/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import TaskUI from "./TasksContainer/ui/taskUI";
+import TaskUI from "./ui/TaskUI";
 
-export const Task = ({ id, content, columnId }: TaskContainerProps) => {
+export function TaskContainer ({ id, content, columnId }: TaskContainerProps) {
   const {
     transform,
     transition,
@@ -32,7 +33,7 @@ export const Task = ({ id, content, columnId }: TaskContainerProps) => {
       {...attributes}
       {...listeners}
     >
-      <TaskUI 
+      <TaskUI
         id={id} 
         content={content}
       />

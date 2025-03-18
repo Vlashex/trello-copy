@@ -1,20 +1,22 @@
-"use server";
-
+import React from "react";
 import { TaskContainerProps } from "@/shared/types";
-import { Task } from "../Task";
+import { TaskContainer } from "@/widgets/Tasks";
 
 type TasksContainerProps = {
   columnId: number
   tasks: TaskContainerProps[]
 }
 
-export default async function TasksContainer({ columnId, tasks }: TasksContainerProps) {
+export function TasksListContainer({ columnId, tasks }: TasksContainerProps) {
+  
+  if (!tasks) return <></>;
+  
   return (
     <>
       {tasks
         .sort((a, b) => b.position - a.position)
         .map((value, index) => (
-          <Task
+          <TaskContainer
             key={index}
             id={value.id}
             content={value.content}
