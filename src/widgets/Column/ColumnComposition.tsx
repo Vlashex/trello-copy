@@ -5,7 +5,7 @@ import { ColumnUI } from "./ui/ColumnUI";
 import Button from "@/features/button";
 import { optimisticDeleteColumn } from "./api/optimisticDeleteColumn";
 import TasksContainer from "../TasksListContainer";
-import { optimisticAddTask } from "../Tasks/lib/optimisticAddTask";
+import { optimisticAddTask } from "../Task/lib/optimisticAddTask";
 
 
 interface ColumnCompositionProps extends ColumnContainerProps {

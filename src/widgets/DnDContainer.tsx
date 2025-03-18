@@ -16,11 +16,12 @@ import axios from "axios";
 import { ColumnContainerProps } from "@/shared/types";
 import useSWR from "swr";
 import { dndStore } from "@/lib/model/columnsStore/store";
-import { optimisticUpdateColumn } from "@/widgets/Columns/api/optimisticUpdateColumns";
-import { optimisticAddColumn } from "@/widgets/Columns/api/optimisticAddColumn";
-import { optimisticUpdateTaskPosition } from "@/widgets/Tasks/lib/optimisticMoveTaskToAnotherColumn";
-import { TaskContainer } from "./Tasks/TaskContainer";
-import { ColumnContainer } from "./Columns";
+import { optimisticUpdateColumn } from "@/widgets/Column/api/optimisticUpdateColumns";
+import { optimisticAddColumn } from "@/widgets/Column/api/optimisticAddColumn";
+import { optimisticUpdateTaskPosition } from "@/widgets/Task/lib/optimisticMoveTaskToAnotherColumn";
+import { TaskContainer } from "./Task/TaskContainer";
+import ColumnsListContainer from "./ColumnsListContainer";
+import ColumnContainer from "./Column";
 
 const fetcher = (url: string) => {
   return axios
@@ -140,15 +141,9 @@ export default function DndContainer () {
             items={columns}
             strategy={horizontalListSortingStrategy}
           >
-            {columns.map((value) => (
-              <ColumnContainer
-                key={value.id}
-                id={value.id}
-                title={value.title}
-                tasks={value.tasks}
-                position={value.position}
-              />
-            ))}
+            <ColumnsListContainer 
+              columns={columns}
+            />
           </SortableContext>
           {!!active &&
             createPortal(

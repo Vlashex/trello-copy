@@ -1,6 +1,6 @@
 import React from "react";
 import { TaskContainerProps } from "@/shared/types";
-import { TaskContainer } from "@/widgets/Tasks";
+import { TaskContainer } from "@/widgets/Task";
 
 type TasksContainerProps = {
   columnId: number
