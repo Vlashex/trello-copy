@@ -1,4 +1,4 @@
-import DnDContainer from "@/widgets/DnDContainer";
+import DnDContainer from "@/widgets/DndContainer/DnDContainer";
 
 
 

@@ -29,7 +29,13 @@ export async function optimisticUpdate<T>({
 
     const rollbackData = updateFn();
 
-    if (!rollbackData) return;
+    console.log("Optimistic update")
+
+    if (!rollbackData) {
+        console.error("No rollbackdata")
+        return
+    };
+    console.log("Rollbackdata: ",rollbackData)
 
     let attempt = 0;
 
@@ -38,6 +44,7 @@ export async function optimisticUpdate<T>({
 
         if (res.error === null) {
             if (setLoading) setLoading(false);
+            console.log("Update success")
             return;
         }
         else {

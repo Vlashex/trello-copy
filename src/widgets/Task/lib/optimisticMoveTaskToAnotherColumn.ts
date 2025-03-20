@@ -6,6 +6,7 @@ import axios from 'axios';
 
 
 const updateFn = (rollBackData: ColumnContainerProps[]): ColumnContainerProps[] => {
+    console.log(rollBackData)
     return rollBackData;
 };
 

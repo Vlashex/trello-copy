@@ -14,9 +14,10 @@ export function ColumnsListContainer({columns} : ColumnsListContainerProps) {
         {
             columns
             .sort((a,b) => b.position - a.position)
-            .map((val) => (
+            .map((val, index) => (
                 <ColumnContainer
                     {...val}
+                    key={index}
                 />
             ))
         }
