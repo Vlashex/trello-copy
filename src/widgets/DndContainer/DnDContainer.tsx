@@ -36,8 +36,6 @@ export default function DndContainer() {
 
   const columns = dndStore(state => state.columns);
 
-
-
   const {
     active,
     onDragStart,

@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { dndStore } from '@/lib/model/columnsStore/store';
-import { DragStartEvent, DragOverEvent, DragEndEvent } from '@dnd-kit/core';
-import { ColumnContainerProps } from '@/shared/types';
 import { optimisticUpdateColumn } from '@/widgets/Column/api/optimisticUpdateColumns';
 import { optimisticUpdateTaskPosition } from '@/widgets/Task/lib/optimisticMoveTaskToAnotherColumn';
+import { DragStartEvent, DragOverEvent, DragEndEvent } from '@dnd-kit/core';
+import { ColumnContainerProps } from '@/shared/types';
 
 export const useDnd = (columns: ColumnContainerProps[]) => {
   const [active, setActive] = useState<any>(null);
@@ -47,10 +47,8 @@ export const useDnd = (columns: ColumnContainerProps[]) => {
   const onDragEnd = ({ active: _active, over }: DragEndEvent) => {
     if (over && rollBackColumnsData && rollBackColumnsData !== columns) {
       if (_active?.data.current?.type === "Column") {
-        console.log("Update Columns");
         optimisticUpdateColumn(rollBackColumnsData, columns);
       } else if (_active?.data.current?.type === "Task") {
-        console.log("Update Tasks");
         optimisticUpdateTaskPosition(rollBackColumnsData, _active.id as number, active?.data.position, _active?.data.current?.columnId);
       }
     }
