@@ -12,9 +12,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import axios from "axios";
 import { ColumnContainerProps } from "@/shared/types";
-import useSWR from "swr";
 import { dndStore } from "@/lib/model/columnsStore/store";
 import { optimisticUpdateColumn } from "@/widgets/Column/api/optimisticUpdateColumns";
 import { optimisticAddColumn } from "@/widgets/Column/api/optimisticAddColumn";
@@ -22,30 +20,11 @@ import { optimisticUpdateTaskPosition } from "@/widgets/Task/lib/optimisticMoveT
 import { TaskContainer } from "./Task/TaskContainer";
 import ColumnsListContainer from "./ColumnsListContainer";
 import ColumnContainer from "./Column";
+import getColumnsHook from "./DndContainer/model/getColumns";
 
-const fetcher = (url: string) => {
-  return axios
-    .get(url, { timeout: 5000 })
-    .then((response) => response.data)
-    .catch((error) => {
-      console.log(error);
-      throw new Error("Failed to load");
-    });
-};
 
 export default function DndContainer () {
-  const { data } = useSWR<ColumnContainerProps[]>(
-    "http://localhost:4200/api/columns",
-    fetcher,
-    {
-      refreshInterval: 0,
-    }
-  );
-  useEffect(() => {
-    data ? dndStore.getState().setColumns(data) : null;
-  }, [data]);
-
-  const columns = dndStore((state) => state.columns);
+  const {columns} = getColumnsHook();
 
   const moveTaskToAnotherColumn = dndStore((state) => state.moveTaskToAnotherColumn);
   const moveTaskToAnotherPlaceInColumn = dndStore((state) => state.moveTaskToAnotherPlaceInColumn);
@@ -57,8 +36,6 @@ export default function DndContainer () {
   const switchColumnsPlaces = dndStore((state) => state.switchColumnsPlaces);
 
   const [active, setActive] = useState<any>(null);
-
-  useEffect(()=>console.log(active), [active])
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
