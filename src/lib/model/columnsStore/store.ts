@@ -26,7 +26,7 @@ const dndStore = create<ColumnsStore>((set) => ({
   columns: [],
   setColumns: (initVal: ColumnContainerProps[]) =>
     set(() => ({
-      columns: initVal.slice().sort((a, b) => a.position - b.position),
+      columns: initVal.slice(),
     })),
 
   addColumn: () =>
@@ -103,7 +103,7 @@ const dndStore = create<ColumnsStore>((set) => ({
       columns[secondIndex].position = temp;
 
       return {
-        columns: columns.slice().sort((a, b) => a.position - b.position),
+        columns: columns.slice(),
       };
     }),
   moveTaskToAnotherPlaceInColumn: (activeTaskId, overTaskId, columnId) =>
@@ -125,7 +125,7 @@ const dndStore = create<ColumnsStore>((set) => ({
 
       console.log(newColumns[activeColumnIndex])
 
-      return {columns: newColumns.slice().sort((a, b) => a.position - b.position)};
+      return {columns: newColumns.slice()}
 
     }),
 

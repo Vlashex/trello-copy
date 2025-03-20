@@ -14,7 +14,7 @@ export function TasksListContainer({ columnId, tasks }: TasksContainerProps) {
   return (
     <>
       {tasks
-        .sort((a, b) => b.position - a.position)
+        .sort((a, b) => a.position - b.position)
         .map((value, index) => (
           <TaskContainer
             key={index}
