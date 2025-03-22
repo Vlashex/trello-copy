@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Мой [сайт-портфолио](https://my-portfolio-site-rosy.vercel.app/)
 
-## Getting Started
+# Kanban Board Application
 
-First, run the development server:
+**Kanban Board Application** – это современное веб-приложение для управления задачами с визуальной доской Kanban. Приложение позволяет добавлять, перемещать и обновлять колонки и задачи с помощью drag-and-drop и оптимистичных обновлений, обеспечивая мгновенную реакцию интерфейса.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Ключевые навыки и технологии
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Next.js и React:**  
+  Создание интерактивного UI, серверный рендеринг и клиентская логика.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **TypeScript:**  
+  Строгая типизация для повышения надежности кода.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **dnd-kit:**  
+  Реализация drag-and-drop для удобного перемещения задач и колонок.
 
-## Learn More
+- **SWR:**  
+  Асинхронное получение данных, кеширование и обновление интерфейса.
 
-To learn more about Next.js, take a look at the following resources:
+- **Zustand:**  
+  Легковесное управление глобальным состоянием приложения.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Feature-Sliced Design (FSD):**  
+  Модульная архитектура для создания масштабируемого и поддерживаемого кода.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Оптимистичные обновления:**  
+  Мгновенное обновление интерфейса с последующим подтверждением или откатом изменений на сервере.
