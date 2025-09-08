@@ -1,4 +1,3 @@
-
 import React from "react";
 
 type ColumnUIProps = {
@@ -8,13 +7,18 @@ type ColumnUIProps = {
   children: React.ReactNode;
 };
 
-export const ColumnUI = ({ style, setNodeRef, attributes, children }: ColumnUIProps) => {
+export const ColumnUI = ({
+  style,
+  setNodeRef,
+  attributes,
+  children,
+}: ColumnUIProps) => {
   return (
     <div
       style={style}
       ref={setNodeRef}
       {...attributes}
-      className="flex flex-col gap-4 min-h-[400px] px-3 min-w-[250px] w-[250px] bg-gray-800 text-white overflow-hidden rounded-sm"
+      className="w-72 flex-shrink-0 rounded-lg bg-gray-800 p-3 flex flex-col gap-4"
     >
       {children}
     </div>

@@ -4,7 +4,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import TaskUI from "./ui/TaskUI";
 
-export function TaskContainer ({ id, content, columnId }: TaskContainerProps) {
+export function TaskContainer({ id, content, columnId }: TaskContainerProps) {
   const {
     transform,
     transition,
@@ -27,16 +27,15 @@ export function TaskContainer ({ id, content, columnId }: TaskContainerProps) {
 
   return (
     <div
-      className={"bg-black rounded-sm p-1" + (isDragging?"border-solid border-[1px] border-red-400 z-50":"")} 
+      className={`rounded-lg bg-gray-700 p-4 shadow-lg transition-all hover:bg-gray-600 ${
+        isDragging ? "border-solid border-[1px] border-red-400 z-50" : ""
+      }`}
       style={style}
       ref={setNodeRef}
       {...attributes}
       {...listeners}
     >
-      <TaskUI
-        id={id} 
-        content={content}
-      />
+      <TaskUI id={id} content={content} />
     </div>
   );
-};
+}
