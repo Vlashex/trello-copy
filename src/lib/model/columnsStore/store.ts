@@ -11,7 +11,8 @@ type ColumnsStore = {
 
   switchColumnsPlaces: (activeId: number, overId: number) => void;
 
-  addTaskToColumn: (columnId: number) => void;
+  addTaskToColumn: (columnId: number, taskProps?: TaskContainerProps) => void;
+  updateTaskId: (tempId: number, realId: number) => void;
   delTaskFromColumn: (taskId: number, columnId: number) => void;
 
   moveTaskToAnotherPlaceInColumn: (
@@ -70,18 +71,18 @@ const dndStore = create<ColumnsStore>((set) => ({
 
       return { columns: newColumns };
     }),
-  addTaskToColumn: (columnId) =>
+  addTaskToColumn: (columnId, taskProps) =>
     set((state) => {
       const newColumns = state.columns.slice();
       const columnIndex = newColumns.findIndex((el) => el.id === columnId);
 
       const columnTasks = newColumns[columnIndex].tasks || [];
 
-      const newTask: TaskContainerProps = {
+      const newTask: TaskContainerProps = taskProps || {
         id: Math.round(Math.random() * 1001),
         content: "NewTask",
         columnId: columnId,
-        position: Math.round(Math.random() * 1001),
+        position: 999999,
       };
 
       columnTasks.push(newTask);
@@ -92,6 +93,26 @@ const dndStore = create<ColumnsStore>((set) => ({
 
       return { columns: newColumns };
     }),
+  updateTaskId: (tempId: number, realId: number) => {
+    set((state) => {
+      const updatedColumns = state.columns.map((column) => {
+        const updatedTasks = column.tasks.map((task) => {
+          if (task.id === tempId) {
+            return {
+              ...task,
+              id: realId,
+            };
+          }
+          return task;
+        });
+        return {
+          ...column,
+          tasks: updatedTasks,
+        };
+      });
+      return { columns: updatedColumns };
+    });
+  },
   switchColumnsPlaces: (activeId, overId) =>
     set((state) => {
       const columns = state.columns.slice();
@@ -110,47 +131,57 @@ const dndStore = create<ColumnsStore>((set) => ({
     set((state) => {
       const newColumns = state.columns.slice();
 
-      const activeColumnIndex = newColumns.findIndex((el) => el.id === columnId);
+      const activeColumnIndex = newColumns.findIndex(
+        (el) => el.id === columnId
+      );
 
       if (activeColumnIndex === -1) return state;
 
-      const activeTaskIndex = newColumns[activeColumnIndex].tasks.findIndex((el) => el.id === activeTaskId);
-      const overTaskIndex = newColumns[activeColumnIndex].tasks.findIndex((el) => el.id === overTaskId);
+      const activeTaskIndex = newColumns[activeColumnIndex].tasks.findIndex(
+        (el) => el.id === activeTaskId
+      );
+      const overTaskIndex = newColumns[activeColumnIndex].tasks.findIndex(
+        (el) => el.id === overTaskId
+      );
 
       if (activeTaskIndex === -1 || overTaskIndex === -1) return state;
 
-      const temp = newColumns[activeColumnIndex].tasks[activeTaskIndex].position;
-      newColumns[activeColumnIndex].tasks[activeTaskIndex].position = newColumns[activeColumnIndex].tasks[overTaskIndex].position;
+      const temp =
+        newColumns[activeColumnIndex].tasks[activeTaskIndex].position;
+      newColumns[activeColumnIndex].tasks[activeTaskIndex].position =
+        newColumns[activeColumnIndex].tasks[overTaskIndex].position;
       newColumns[activeColumnIndex].tasks[overTaskIndex].position = temp;
 
-      console.log(newColumns[activeColumnIndex])
+      console.log(newColumns[activeColumnIndex]);
 
-      return {columns: newColumns.slice()}
-
+      return { columns: newColumns.slice() };
     }),
 
   moveTaskToAnotherColumn: (taskId, targetColumnId) =>
-  set((state) => {
-    const newColumns = state.columns.map((column) => ({ ...column }));
+    set((state) => {
+      const newColumns = state.columns.map((column) => ({ ...column }));
 
-    const sourceColumn = newColumns.find((column) =>
-      column.tasks.some((task) => task.id === taskId)
-    );
-    if (!sourceColumn) return state;
+      const sourceColumn = newColumns.find((column) =>
+        column.tasks.some((task) => task.id === taskId)
+      );
+      if (!sourceColumn) return state;
 
-    const taskToMove = sourceColumn.tasks.find((task) => task.id === taskId);
-    if (!taskToMove) return state;
+      const taskToMove = sourceColumn.tasks.find((task) => task.id === taskId);
+      if (!taskToMove) return state;
 
-    const targetColumn = newColumns.find((column) => column.id === targetColumnId);
-    if (!targetColumn) return state;
+      const targetColumn = newColumns.find(
+        (column) => column.id === targetColumnId
+      );
+      if (!targetColumn) return state;
 
-    sourceColumn.tasks = sourceColumn.tasks.filter((task) => task.id !== taskId);
+      sourceColumn.tasks = sourceColumn.tasks.filter(
+        (task) => task.id !== taskId
+      );
 
-    targetColumn.tasks = [...targetColumn.tasks, taskToMove];
+      targetColumn.tasks = [...targetColumn.tasks, taskToMove];
 
-    return { columns: newColumns };
-  }),
-
+      return { columns: newColumns };
+    }),
 }));
 
 export { dndStore };
