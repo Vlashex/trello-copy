@@ -15,11 +15,11 @@ export default function TaskUI({ id, content }: TaskUIProps) {
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm text-blue-400">Task</span>
+        <span className="text-sm text-blue-400">Task {id}</span>
         <DropDown
           onToggle={() => {}}
           onStateChange={() => {}}
-          initialOpen={true}
+          initialOpen={false}
           closeOnOutsideClick={false}
           className="relative w-fit"
         >
@@ -40,7 +40,6 @@ export default function TaskUI({ id, content }: TaskUIProps) {
           </DropDownContent>
         </DropDown>
       </div>
-      <h4 className="mb-2 text-white">Task {id}</h4>
       <p className="text-sm text-gray-400">{content}</p>
       <div className="mt-4 flex items-center justify-between">
         <div className="flex -space-x-2">{/* Placeholder for avatars */}</div>
