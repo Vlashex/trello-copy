@@ -55,7 +55,20 @@ export default function DndContainer() {
   return (
     <main className="min-h-screen h-screen bg-gray-900 p-8">
       {/* Board Container */}
-      <div className="h-full flex space-x-4 overflow-x-auto pb-4">
+      <div
+        className="h-full flex space-x-4 overflow-x-auto pb-4
+                  [&::-webkit-scrollbar]:w-1
+                  [&::-webkit-scrollbar-track]:bg-transparent 
+                  [&::-webkit-scrollbar-thumb]:bg-transparent 
+                  [&::-webkit-scrollbar-thumb]:rounded-full
+                  hover:[&::-webkit-scrollbar-thumb]:bg-gray-600
+                  hover:[&::-webkit-scrollbar-track]:bg-gray-800
+                  focus:[&::-webkit-scrollbar-thumb]:bg-gray-600
+                  focus:[&::-webkit-scrollbar-track]:bg-gray-800
+                  active:[&::-webkit-scrollbar-thumb]:bg-gray-600
+                  active:[&::-webkit-scrollbar-track]:bg-gray-800
+      "
+      >
         {columns ? (
           <DndContext
             sensors={sensors}
